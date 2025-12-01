@@ -1,22 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from tkinter import scrolledtext
-import subprocess
 import re
 import os
 import csv
-# 不再需要从外部导入FileConverter类，将在本文件中定义
 
-# 删除原来的converters字典映射，不再需要
-# converters = {
-#     "CSV转PROF": "convert_csv_to_prof.py",
-#     "PROF转CSV": "convert_prof_to_csv.py",
-#     "CSV转XY": "convert_csv_to_xy.py",
-#     "XY转CSV": "convert_xy_to_csv.py"
-# }
-
-# 初始化FileConverter类实例将在添加类定义后进行
-# file_converter = FileConverter()
 
 # 文件格式转换类定义
 class FileConverter:
