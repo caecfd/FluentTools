@@ -165,23 +165,24 @@ class FileConverter:
         i = 0
         while i < len(lines):
             line = lines[i].strip()
-            if line.startswith('(labels'):
-                match = re.match(r'\(labels\s+"([^"]+)"\s+"([^"]+)"\)', line)
+            # 更宽松地匹配标签行，能处理(labels和(lables两种拼写
+            if '(labels' in line.lower() or '(lables' in line.lower():
+                # 使用更宽松的正则表达式，能同时匹配(labels和(lables，并且允许行中有其他字符
+                match = re.search(r'\(lables?\s+"([^"]+)"\s+"([^"]+)"', line)
                 if match:
                     headers = [match.group(1), match.group(2)]
                     found_labels = True
-                i += 1
-                continue
-            if found_labels and line == ')':
+            elif found_labels and line == ')':
                 break
-            if found_labels and line and not line.startswith('(') and not line.startswith(')'):
+            elif found_labels and line and not line.startswith('(') and not line.startswith(')'):
+                # 提取数值数据
                 parts = re.findall(r'[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?', line)
                 if len(parts) >= 2:
                     data.append([parts[0], parts[1]])
             i += 1
 
         if not headers:
-            raise ValueError('未找到 labels 行')
+            raise ValueError('未找到 labels 或 lables 行')
 
         csv_path = xy_path.rsplit('.', 1)[0] + '.csv'
         with open(csv_path, 'w', newline='', encoding='utf-8') as f:
@@ -284,7 +285,7 @@ def perform_conversion():
         log_text = f"转换完成！\n输入文件：{input_file}\n输出文件：{output_file}\n"
         update_output_log(log_text)
         
-        messagebox.showinfo("成功", f"转换完成！\n生成文件：{output_file}")
+        # 不显示成功对话框，只在日志中显示
         
     except Exception as e:
         error_msg = f"转换出错！\n错误：{str(e)}"
